@@ -17,6 +17,7 @@ package com.example.lemonade
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
@@ -67,10 +68,13 @@ class MainActivity : AppCompatActivity() {
         setViewElements()
         lemonImage!!.setOnClickListener {
             // TODO: call the method that handles the state when the image is clicked
+            clickLemonImage()
         }
         lemonImage!!.setOnLongClickListener {
             // TODO: replace 'false' with a call to the function that shows the squeeze count
-            false
+            Log.i("XY", "Oprimido")
+
+            showSnackbar()
         }
     }
 
@@ -111,6 +115,39 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: lastly, before the function terminates we need to set the view elements so that the
         //  UI can reflect the correct state
+        Log.i("XY", "se va a exprimir")
+
+        when(lemonadeState){
+
+            SELECT->{
+                Log.i("XY", "se oprimio")
+                lemonadeState=SQUEEZE
+               lemonSize=pick()
+                squeezeCount=0
+            }
+            SQUEEZE->{
+                     squeezeCount++
+                     lemonSize--
+                    if(lemonSize<=0)lemonadeState=DRINK
+
+            }
+            DRINK->{
+          lemonadeState=RESTART
+                lemonSize=-1
+            }
+            RESTART->{
+            lemonadeState=SELECT
+            }
+
+        }
+
+        setViewElements()
+    }
+
+    //Metooo pick que se menciona en el tutorial PERO NUNCA SE ESPEIICA QUE COOMO CUANDO O QUE PEDO
+    fun pick(): Int{
+       lemonSize=5
+        return lemonSize
     }
 
     /**
@@ -126,6 +163,38 @@ class MainActivity : AppCompatActivity() {
         // TODO: Additionally, for each state, the lemonImage should be set to the corresponding
         //  drawable from the drawable resources. The drawables have the same names as the strings
         //  but remember that they are drawables, not strings.
+
+        val infoTextView= findViewById<TextView>(R.id.text_action)
+        val imagen=findViewById<ImageView>(R.id.image_lemon_state)
+        when(lemonadeState){
+
+            SELECT->{
+                val submitText=resources.getString(R.string.lemon_select)
+                infoTextView.text=submitText
+                //Imagen
+                imagen.setImageResource(R.drawable.lemon_tree)
+
+            }
+            SQUEEZE->{
+                val submitText=resources.getString(R.string.lemon_squeeze)
+                infoTextView.text=submitText
+                //Imagen
+                imagen.setImageResource(R.drawable.lemon_squeeze)
+            }
+            DRINK->{
+                val submitText=resources.getString(R.string.lemon_drink)
+                infoTextView.text=submitText
+                //Imagen
+                imagen.setImageResource(R.drawable.lemon_drink)
+            }
+            RESTART->{
+                val submitText=resources.getString(R.string.lemon_empty_glass)
+                infoTextView.text=submitText
+                //Imagen
+                imagen.setImageResource(R.drawable.lemon_restart)
+            }
+
+        }
     }
 
     /**
